@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const categoryController = require('../controllers/categoryController');
+const { getOrCreateCategory,  allCategoriesSummary} = require('../controllers/categoryController');
 
-// Menambahkan route untuk membuat kategori baru
-router.post('/', categoryController.createCategory);
+// Routes untuk kategori
+router.route('/')
+  .post(getOrCreateCategory)   // Menambah kategori baru (POST)
+  .get(getOrCreateCategory);   // Mengambil semua kategori (GET)
 
-// Menambahkan route untuk mendapatkan semua kategori
-router.get('/', categoryController.getCategories);
+// Routes untuk menampilkan barang berdasarkan kategori
+router.get('/percategori-summaryall', allCategoriesSummary);
 
 module.exports = router;

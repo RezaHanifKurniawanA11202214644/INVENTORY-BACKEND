@@ -4,10 +4,10 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Items', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
       },
       name: {
         type: Sequelize.STRING(100),
@@ -24,7 +24,6 @@ module.exports = {
       quantity: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 0,
       },
       category_id: {
         type: Sequelize.INTEGER,
@@ -34,7 +33,7 @@ module.exports = {
           key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL', // Optional: kalau category dihapus, itemnya tidak hilang
+        onDelete: 'SET NULL',
       },
       supplier_id: {
         type: Sequelize.INTEGER,
@@ -44,7 +43,7 @@ module.exports = {
           key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL', // Optional
+        onDelete: 'SET NULL',
       },
       created_by: {
         type: Sequelize.INTEGER,
@@ -57,12 +56,10 @@ module.exports = {
         onDelete: 'SET NULL',
       },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       }

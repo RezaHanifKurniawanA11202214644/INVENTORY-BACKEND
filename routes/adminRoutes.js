@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/adminController'); // Import Controller Admin
+const { getOrCreateAdmin } = require('../controllers/adminController');
 
-// Routing untuk mengambil semua data admin
-router.get('/', adminController.getAdmins);
-
-// Routing untuk menambahkan admin baru
-router.post('/', adminController.createAdmin);
+// Routes untuk admin
+router.route('/')
+  .post(getOrCreateAdmin)   // Menambah admin baru (POST)
+  .get(getOrCreateAdmin);   // Mengambil semua admin (GET)
 
 module.exports = router;

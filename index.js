@@ -1,24 +1,23 @@
 const express = require('express');
 const app = express();
-const { Admin, Category, Supplier, Item } = require('./models');
-const adminRoutes = require('./routes/adminRoutes'); 
-const itemRoutes = require('./routes/itemRoutes');
+
+// Mengimpor routes yang sudah didefinisikan
+const adminRoutes = require('./routes/adminRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const itemRoutes = require('./routes/itemRoutes');
 const supplierRoutes = require('./routes/supplierRoutes');
-const inventoryRoutes = require('./routes/inventoryRoutes');
 
 // Middleware untuk parsing JSON
 app.use(express.json());
 
-// Routing
-app.use('/api/admins', adminRoutes);
-app.use('/api/items', itemRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/suppliers', supplierRoutes);
-app.use('/api/inventory', inventoryRoutes);
+// Routing untuk API
+app.use('/api/admins', adminRoutes);      // Menangani route terkait admin
+app.use('/api/categories', categoryRoutes);   // Menangani route terkait kategori
+app.use('/api/items', itemRoutes);       // Menangani route terkait item
+app.use('/api/suppliers', supplierRoutes);   // Menangani route terkait supplier
 
-// Route untuk menangani request default
-app.get('/', (req, res) => {
+// Route default
+app.get('/api/', (req, res) => {
   res.send('Welcome to Inventory Management API!');
 });
 
@@ -27,14 +26,14 @@ app.use((req, res, next) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Middleware untuk error umum
+// Middleware untuk menangani error
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong' });
 });
 
-// Starting the server
-const PORT = 3000;
+// Menjalankan server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

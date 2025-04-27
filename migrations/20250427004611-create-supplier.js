@@ -4,39 +4,37 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Suppliers', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.INTEGER,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        autoIncrement: true,
+        allowNull: false,
       },
       name: {
         type: Sequelize.STRING(100),
         allowNull: false,
-        unique: true, // Supplier biasanya unik
+        unique: true,
       },
       contact_info: {
         type: Sequelize.STRING(100),
-        allowNull: true
+        allowNull: true,
       },
       created_by: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'Admins',
-          key: 'id'
+          key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL' // Lebih aman, data supplier tidak ikut hilang
+        onDelete: 'SET NULL',
       },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       }
     });
   },

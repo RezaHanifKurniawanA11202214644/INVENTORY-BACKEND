@@ -1,37 +1,83 @@
-const { Category } = require('../models');
+const { Category, Item } = require('../models'); 
 
-// Fungsi untuk menambahkan kategori
-exports.createCategory = async (req, res) => {
+exports.getOrCreateCategory = async (req, res) => {
   try {
-    const { name, description } = req.body; // Mengambil data nama dan deskripsi kategori dari body request
+    if (req.method === 'POST') {
+      const { name, description, created_by } = req.body;  // <<=== AMBIL created_by dari req.body
 
-    // Validasi: pastikan nama kategori ada
-    if (!name) {
-      return res.status(400).json({ error: 'Category name is required' });
+      if (!name) {
+        return res.status(400).json({ error: 'Category name is required' });
+      }
+
+      if (!created_by) {
+        return res.status(400).json({ error: 'Created_by is required' });  // Validasi tambahan
+      }
+
+      const newCategory = await Category.create({
+        name,
+        description,
+        created_by 
+      });
+
+      return res.status(201).json(newCategory);
+    } else if (req.method === 'GET') {
+      const categories = await Category.findAll();
+      return res.status(200).json(categories);
     }
-
-    // Menambahkan kategori baru dalam database dengan created_by = 1 (admin statis)
-    const newCategory = await Category.create({
-      name,
-      description,   // Menggunakan nilai deskripsi yang diterima dari request
-      created_by: 1  // ID admin yang membuat kategori (ID 1 untuk admin statis)
-    });
-
-    // Mengirimkan kategori baru dalam format JSON dengan status 201
-    res.status(201).json(newCategory);
   } catch (err) {
-    // Jika terjadi error, kirimkan error dalam format JSON
     res.status(400).json({ error: err.message });
   }
 };
 
-
-// Fungsi untuk mendapatkan semua kategori
-exports.getCategories = async (req, res) => {
+// Fungsi untuk menampilkan ringkasan semua kategori
+exports.allCategoriesSummary = async (req, res) => {
   try {
-    const categories = await Category.findAll();  // Mengambil semua kategori dari database
-    res.status(200).json(categories);  // Mengirimkan kategori dalam format JSON
+    const categories = await Category.findAll({
+      include: {
+        model: Item,
+        as: 'Items', // Pastikan alias sama dengan di model relasi kalau pakai alias
+      }
+    });
+
+    const summaries = categories.map(category => {
+      const items = category.Items || [];
+
+      let totalStock = 0;
+      let totalValue = 0;
+      let totalPrice = 0;
+
+      items.forEach(item => {
+        totalStock += item.quantity;
+        totalValue += item.price * item.quantity;
+        totalPrice += item.price;
+      });
+
+      const averagePrice = items.length > 0 ? totalPrice / items.length : 0;
+
+      return {
+        categoryId: category.id,
+        categoryName: category.name,
+        totalItems: items.length,
+        totalStock,
+        totalValue,
+        averagePrice,
+        items: items.map(item => ({
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          price: item.price,
+          quantity: item.quantity,
+          created_by: item.created_by,  // Menyertakan created_by dari item
+          supplier_id: item.supplier_id,  // Menyertakan supplier_id dari item
+          create_at: item.create_at,
+          update_at: item.update_at
+        }))
+      };
+    });
+
+    res.status(200).json(summaries);
   } catch (err) {
-    res.status(400).json({ error: err.message });  // Mengirimkan error jika ada masalah
+    res.status(400).json({ error: err.message });
   }
 };
+

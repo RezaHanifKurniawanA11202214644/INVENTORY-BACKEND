@@ -1,20 +1,20 @@
-# Menggunakan image Node.js
-FROM node:16
+# Menggunakan image Node.js yang sudah ada sebagai base image
+FROM node:18
 
-# Set working directory
+# Set working directory di dalam container
 WORKDIR /app
 
-# Copy file dependency
-COPY package*.json ./
+# Menyalin package.json dan package-lock.json ke container
+COPY package*.json ./ 
 
-# Install dependency
+# Menginstall dependensi aplikasi
 RUN npm install
 
-# Copy seluruh project
-COPY . .
+# Menyalin semua file ke dalam container
+COPY . . 
 
-# Expose port aplikasi
+# Expose port untuk aplikasi backend
 EXPOSE 3000
 
-# Command untuk menjalankan app
+# Perintah untuk menjalankan aplikasi, sudah termasuk migrasi
 CMD ["npm", "start"]

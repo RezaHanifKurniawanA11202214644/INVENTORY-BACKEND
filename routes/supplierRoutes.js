@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const supplierController = require('../controllers/supplierController');
+const { getOrCreateSupplier, supplierSummary } = require('../controllers/supplierController');
 
-// Menambahkan route untuk membuat supplier baru
-router.post('/', supplierController.createSupplier);
+// Routes untuk supplier
+router.route('/')
+  .post(getOrCreateSupplier)  // Menambah supplier baru (POST)
+  .get(getOrCreateSupplier);  // Mengambil semua supplier (GET)
 
-// Menambahkan route untuk mendapatkan semua supplier
-router.get('/', supplierController.getSuppliers);
+// Routes untuk menampilkan ringkasan barang yang disuplai oleh masing-masing pemasok
+router.get('/supplier-summary', supplierSummary);  // Ringkasan barang yang disuplai oleh pemasok
 
 module.exports = router;

@@ -1,11 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const itemController = require('../controllers/itemController');
+const { getOrCreateItem, lowStockItems, categorySummary, systemSummary } = require('../controllers/itemController');
 
-// Menambahkan route untuk membuat item baru
-router.post('/', itemController.createItem);
+// Routes untuk item
+router.route('/')
+  .post(getOrCreateItem)  // Menambah item baru (POST)
+  .get(getOrCreateItem);  // Mengambil semua item (GET) Ringkasan stok barang
 
-// Menambahkan route untuk mendapatkan semua item
-router.get('/', itemController.getItems);
+
+// Routes untuk menampilkan barang dengan stok rendah
+router.get('/low-stock', lowStockItems);  // Barang dengan stok rendah ambang batas 5
+
+// Routes untuk menampilkan ringkasan per kategori
+router.get('/:categoryId/category-byid-summary', categorySummary);  // Menampilkan ringkasan kategori berdasarkan categoryId
+
+// Routes untuk menampilkan ringkasan keseluruhan sistem
+router.get('/system-summary', systemSummary);  // Ringkasan keseluruhan sistem
 
 module.exports = router;
